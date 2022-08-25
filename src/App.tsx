@@ -1,15 +1,11 @@
-import { Divider, Typography } from '@mui/material';
-import { Stack } from '@mui/system';
+import { Stack } from '@mui/material';
 
-import logo from './logo.svg';
+import Repl from './components/Repl';
 
 const App = () => {
   return (
-    <Stack justifyItems={'center'} divider={<Divider />}>
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-      </header>
-      <Typography variant="h1">Helo World</Typography>
+    <Stack justifyItems={'center'}>
+      <Repl />
     </Stack>
   );
 };
