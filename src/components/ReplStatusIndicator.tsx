@@ -17,7 +17,8 @@ const ReplStatusIndicator: FC<Props> = ({ status }) => {
         color: 'success.main',
       };
       break;
-    case ReplStatus.LOADING:
+    case ReplStatus.LOADING_PYODIDE:
+    case ReplStatus.LOADING_MODULE:
     case ReplStatus.INSTALLING:
     case ReplStatus.RUNNING:
       style = {

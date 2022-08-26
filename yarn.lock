@@ -2112,10 +2112,10 @@ __metadata:
 
 "@graasp/pyodide-worker@github:spaenleh/graasp-pyodide":
   version: 0.0.1
-  resolution: "@graasp/pyodide-worker@https://github.com/spaenleh/graasp-pyodide.git#commit=6775fc1a93d373a4e638ba4f2a8d60a24515245c"
+  resolution: "@graasp/pyodide-worker@https://github.com/spaenleh/graasp-pyodide.git#commit=08b88a6b342f3b0e4f711a6b3f7797eb1446aa7e"
   dependencies:
     typescript: ^4.7.4
-  checksum: dd70a03058b80b64b58ebe684ff5aab88eff5fb2ebed77639e854b3047cb2b63926617e18fe66d3b86ed911236d95915bcb3de1282751578a9f8ae3937678532
+  checksum: d1bf72dd15756350e8293c350ad0bfe7ca5f8ab316b9c76c3e55da07f4eeaca39baea8feb4512285496fe31a9679e87dea3608d376e359a6da7f2f6f5aebbc7b
   languageName: node
   linkType: hard
 

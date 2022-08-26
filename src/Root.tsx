@@ -15,7 +15,12 @@ import { ColorModeSwitcher } from './components/ColorModeSwitcher';
 import ColorModeContext from './contexts/ColorModeContext';
 
 export default function Root() {
-  const [mode, setMode] = useState<'light' | 'dark'>('light');
+  const userPreference = window.matchMedia(
+    '(prefers-color-scheme: dark)',
+  ).matches;
+  const [mode, setMode] = useState<'light' | 'dark'>(
+    userPreference ? 'dark' : 'light',
+  );
   const colorMode = useMemo(
     () => ({
       toggleColorMode: () => {

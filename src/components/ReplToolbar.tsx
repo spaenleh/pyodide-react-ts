@@ -9,9 +9,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { FC } from 'react';
 
-import { PlayArrow } from '@mui/icons-material';
+import { PlayArrow, Square } from '@mui/icons-material';
 import { LoadingButton } from '@mui/lab';
-import { Button } from '@mui/material';
+import { Button, Stack } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 
 import { ReplStatus } from '../constants/constants';
@@ -23,17 +23,26 @@ const broomIconDefinition: IconDefinition = findIconDefinition(broomLookup);
 
 type Props = {
   onRunCode: () => void;
+  onStopCode: () => void;
   onClearOutput: () => void;
   status: ReplStatus;
 };
 
-const ReplToolbar: FC<Props> = ({ onRunCode, onClearOutput, status }) => {
+const ReplToolbar: FC<Props> = ({
+  onRunCode,
+  onStopCode,
+  onClearOutput,
+  status,
+}) => {
   const isLoading = [
-    ReplStatus.LOADING,
+    ReplStatus.LOADING_MODULE,
+    ReplStatus.LOADING_PYODIDE,
     ReplStatus.INSTALLING,
-    ReplStatus.WAIT_INPUT,
     ReplStatus.ERROR,
   ].includes(status);
+  const isRunning = [ReplStatus.RUNNING, ReplStatus.WAIT_INPUT].includes(
+    status,
+  );
 
   return (
     <Grid container alignItems="stretch" justifyContent="space-between">
@@ -41,14 +50,26 @@ const ReplToolbar: FC<Props> = ({ onRunCode, onClearOutput, status }) => {
         <ReplStatusIndicator status={status} />
       </Grid>
       <Grid>
-        <LoadingButton
-          variant="outlined"
-          loading={isLoading}
-          startIcon={<PlayArrow />}
-          onClick={onRunCode}
-        >
-          Run
-        </LoadingButton>
+        <Stack direction="row" spacing={1}>
+          <LoadingButton
+            variant="outlined"
+            loading={isLoading}
+            disabled={isRunning}
+            startIcon={<PlayArrow />}
+            onClick={onRunCode}
+          >
+            Run
+          </LoadingButton>
+          <Button
+            variant="outlined"
+            color="error"
+            disabled={!isRunning}
+            startIcon={<Square />}
+            onClick={onStopCode}
+          >
+            Stop
+          </Button>
+        </Stack>
       </Grid>
       <Grid xs={3} display="flex" justifyContent="flex-end">
         <Button

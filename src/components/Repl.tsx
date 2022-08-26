@@ -1,25 +1,49 @@
 import { FC, useEffect, useState } from 'react';
 
-import { Box, Stack } from '@mui/material';
+import { Alert, Stack } from '@mui/material';
+import Grid from '@mui/material/Unstable_Grid2';
 
 import { PyWorker } from '@graasp/pyodide-worker';
 
-import { ReplStatus } from '../constants/constants';
+import { MAX_REPL_HEIGHT, ReplStatus } from '../constants/constants';
 import CodeEditor from './CodeEditor';
+import InputPrompt from './InputPrompt';
+import OutputConsole from './OutputConsole';
 import ReplToolbar from './ReplToolbar';
+import ShowFigures from './ShowFigures';
 
 const Repl: FC = () => {
   const [worker, setWorker] = useState<PyWorker | null>(null);
   const [output, setOutput] = useState<string>('');
+  const [prompt, setPrompt] = useState<string>('');
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [error, setError] = useState<string | null>(null);
+  const [figures, setFigures] = useState<string[]>([]);
   const [value, setValue] = useState('');
   const [isExecuting, setIsExecuting] = useState(false);
-  const [replStatus, setReplStatus] = useState<ReplStatus>(ReplStatus.LOADING);
+  const [isWaitingForInput, setIsWaitingForInput] = useState(false);
+  const [replStatus, setReplStatus] = useState<ReplStatus>(
+    ReplStatus.LOADING_PYODIDE,
+  );
   // register worker on mount
   useEffect(() => {
+    // todo: reconciliate the concat output option
     const workerInstance = new PyWorker();
 
-    workerInstance.onOutput = (newOutput) => {
-      setOutput(newOutput);
+    workerInstance.onOutput = (newOutput, append = false) => {
+      setOutput((prevOutput) =>
+        append ? `${prevOutput}${newOutput}` : newOutput,
+      );
+    };
+
+    workerInstance.onInput = (prompt) => {
+      setIsWaitingForInput(true);
+      setPrompt(prompt);
+    };
+
+    workerInstance.onError = (newError: any) => {
+      console.warn(newError);
+      // setError(newError.data);
     };
 
     workerInstance.onTerminated = () => {
@@ -27,12 +51,18 @@ const Repl: FC = () => {
       setReplStatus(ReplStatus.READY);
     };
 
+    workerInstance.onFigure = (figureData) => {
+      setFigures((prevFigures) => [...prevFigures, figureData]);
+    };
+
     workerInstance.onStatusChanged = (status: string) => {
       console.log('Status Update:', status);
       let newStatus;
       // loading Pyodide || loading module
-      if (status.startsWith('loading')) {
-        newStatus = ReplStatus.LOADING;
+      if (status.startsWith('loading Pyodide')) {
+        newStatus = ReplStatus.LOADING_PYODIDE;
+      } else if (status.startsWith('loading module')) {
+        newStatus = ReplStatus.LOADING_MODULE;
       } else if (['startup', 'setup'].includes(status)) {
         newStatus = ReplStatus.INSTALLING;
       } else if (status === 'running') {
@@ -69,63 +99,105 @@ const Repl: FC = () => {
 
   const onClickClearOutput = () => {
     setOutput('');
+    setFigures([]);
     worker?.clearOutput();
+  };
+
+  const onClickStopCode = () => {
+    if (isExecuting && worker) {
+      worker.stop();
+      setIsExecuting(false);
+    }
+  };
+
+  const onClickValidateInput = (userInput: string) => {
+    if (worker) {
+      worker.submitInput(userInput);
+      setIsWaitingForInput(false);
+    }
+  };
+
+  const onClickCancel = () => {
+    if (worker) {
+      worker.cancelInput();
+      setIsWaitingForInput(false);
+    }
   };
 
   return (
     <Stack direction="column" spacing={1}>
       <ReplToolbar
         onRunCode={onClickRunCode}
+        onStopCode={onClickStopCode}
         onClearOutput={onClickClearOutput}
         status={replStatus}
       />
-      <Stack direction="row" spacing={2}>
-        <Box
+      <Grid container direction="row">
+        <Grid
+          xs
           sx={{
-            border: 2,
+            mr: 0.5,
+            border: 1,
             borderRadius: 1,
             borderColor: 'error.main',
-            width: '100%',
-            height: '50vh',
+            height: MAX_REPL_HEIGHT,
             overflow: 'hidden',
           }}
         >
           <CodeEditor setValue={setValue} />
-        </Box>
-        <Stack
+        </Grid>
+        <Grid
+          container
+          xs
           direction="column"
-          sx={{ height: '50vh', width: '100%' }}
-          spacing={2}
+          sx={{
+            ml: 0.5,
+            height: MAX_REPL_HEIGHT,
+          }}
         >
-          <Box
-            width={'100%'}
-            flexGrow={1}
+          <Grid
+            xs
+            display="flex"
+            // flexGrow={1}
+            overflow="hidden"
             sx={{
-              border: 2,
+              mb: 0.5,
+              border: 1,
               borderRadius: 1,
               borderColor: 'info.main',
-              height: '100%',
-              width: '100%',
             }}
           >
-            {/* we need to set the word-wrap: pre -> to display it correctly */}
-            <pre>{output}</pre>
-          </Box>
-          <Box
-            width={'100%'}
-            flexGrow={1}
+            <Grid container direction="column" width="100%">
+              <Grid xs>
+                <OutputConsole output={output} />
+              </Grid>
+              <Grid justifySelf={'flex-end'}>
+                <InputPrompt
+                  prompt={prompt}
+                  onValidate={onClickValidateInput}
+                  onCancel={onClickCancel}
+                  isWaitingForInput={isWaitingForInput}
+                />
+              </Grid>
+            </Grid>
+          </Grid>
+          <Grid
+            xs
+            display="flex"
+            // flexGrow={1}
+            overflow="hidden"
             sx={{
-              border: 2,
+              mt: 0.5,
+              border: 1,
               borderRadius: 1,
               borderColor: 'info.main',
-              height: '100%',
-              width: '100%',
             }}
           >
-            Figures
-          </Box>
-        </Stack>
-      </Stack>
+            <ShowFigures figures={figures} />
+          </Grid>
+        </Grid>
+      </Grid>
+      {error && <Alert color="error">{error}</Alert>}
     </Stack>
   );
 };
