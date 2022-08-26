@@ -1,38 +1,68 @@
-import { FC, useEffect, useState } from 'react';
+import {
+  IconDefinition,
+  IconLookup,
+  findIconDefinition,
+  library,
+} from '@fortawesome/fontawesome-svg-core';
+import { fas } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+import { FC } from 'react';
 
 import { PlayArrow } from '@mui/icons-material';
 import { LoadingButton } from '@mui/lab';
-import { Stack } from '@mui/material';
+import { Button } from '@mui/material';
+import Grid from '@mui/material/Unstable_Grid2';
 
-import ReplStatus, { Status } from '../ReplStatus';
+import { ReplStatus } from '../constants/constants';
+import ReplStatusIndicator from './ReplStatusIndicator';
+
+library.add(fas);
+const broomLookup: IconLookup = { prefix: 'fas', iconName: 'broom' };
+const broomIconDefinition: IconDefinition = findIconDefinition(broomLookup);
 
 type Props = {
-  setExecute: (v: boolean) => void;
+  onRunCode: () => void;
+  onClearOutput: () => void;
+  status: ReplStatus;
 };
 
-const ReplToolbar: FC<Props> = ({ setExecute }) => {
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
-  });
+const ReplToolbar: FC<Props> = ({ onRunCode, onClearOutput, status }) => {
+  const isLoading = [
+    ReplStatus.LOADING,
+    ReplStatus.INSTALLING,
+    ReplStatus.WAIT_INPUT,
+    ReplStatus.ERROR,
+  ].includes(status);
 
   return (
-    <Stack direction="row" alignItems="center" spacing={2}>
-      <ReplStatus status={Status.LOADING} />
-      <ReplStatus status={Status.ERROR} />
-      <ReplStatus status={Status.READY} />
-      <LoadingButton
-        variant="outlined"
-        loading={isLoading}
-        startIcon={<PlayArrow />}
-        onClick={() => setExecute(true)}
-      >
-        Run
-      </LoadingButton>
-    </Stack>
+    <Grid container alignItems="stretch" justifyContent="space-between">
+      <Grid xs={3} display="flex" justifyContent="flex-start">
+        <ReplStatusIndicator status={status} />
+      </Grid>
+      <Grid>
+        <LoadingButton
+          variant="outlined"
+          loading={isLoading}
+          startIcon={<PlayArrow />}
+          onClick={onRunCode}
+        >
+          Run
+        </LoadingButton>
+      </Grid>
+      <Grid xs={3} display="flex" justifyContent="flex-end">
+        <Button
+          variant="outlined"
+          color="error"
+          startIcon={
+            <FontAwesomeIcon icon={broomIconDefinition} color="error" />
+          }
+          onClick={onClearOutput}
+        >
+          Clear
+        </Button>
+      </Grid>
+    </Grid>
   );
 };
 export default ReplToolbar;
