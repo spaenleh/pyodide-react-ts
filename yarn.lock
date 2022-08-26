@@ -2050,8 +2050,10 @@ __metadata:
 
 "@graasp/pyodide-worker@github:spaenleh/graasp-pyodide":
   version: 0.0.1
-  resolution: "@graasp/pyodide-worker@https://github.com/spaenleh/graasp-pyodide.git#commit=8befb574a0431ee1bfeebcb8785997398fc09625"
-  checksum: d00efe911b286825015943c5aa51eae97f0a1d4c2fb1be36a55ee1282916a263fa80ab231da9d1f0068d3556df6b8d95ab5a2704f6e1576228b725bf8a22bd81
+  resolution: "@graasp/pyodide-worker@https://github.com/spaenleh/graasp-pyodide.git#commit=54d73fb99d9af68c02785b8ffde8588f1e480e0f"
+  dependencies:
+    typescript: ^4.7.4
+  checksum: 0dd8d263d00f2a410c5d71901bfc714a2024dfee4a223c2da9ba45601051cc0e4735cdd689807a01edb27170b8ce96d2b44e0fff73bc2d2263e1b99b7b36d781
   languageName: node
   linkType: hard
 
@@ -12620,7 +12622,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:4.7.4":
+"typescript@npm:4.7.4, typescript@npm:^4.7.4":
   version: 4.7.4
   resolution: "typescript@npm:4.7.4"
   bin:
@@ -12630,7 +12632,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@4.7.4#~builtin<compat/typescript>":
+"typescript@patch:typescript@4.7.4#~builtin<compat/typescript>, typescript@patch:typescript@^4.7.4#~builtin<compat/typescript>":
   version: 4.7.4
   resolution: "typescript@patch:typescript@npm%3A4.7.4#~builtin<compat/typescript>::version=4.7.4&hash=a1c5e5"
   bin:

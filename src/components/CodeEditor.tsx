@@ -2,7 +2,7 @@ import { javascript } from '@codemirror/lang-javascript';
 import { python } from '@codemirror/lang-python';
 import CodeMirror from '@uiw/react-codemirror';
 
-import { FC, useState } from 'react';
+import { FC } from 'react';
 
 import { useTheme } from '@mui/material';
 
