@@ -11,3 +11,4 @@ export enum ReplStatus {
 }
 
 export const MAX_REPL_HEIGHT = '60vh';
+export const DEFAULT_INPUT_VALUE = '';

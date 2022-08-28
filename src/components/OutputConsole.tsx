@@ -1,11 +1,18 @@
-import { FC } from 'react';
+import { FC, useRef } from 'react';
+import { useEffect } from 'react';
 
 import { styled } from '@mui/material';
 
-const Frame = styled('pre')(({ theme }) => ({
-  margin: '0px',
-  padding: theme.spacing(1),
-  overflow: 'scroll',
+const StyledTextArea = styled('textarea')(({ theme }) => ({
+  width: '100%',
+  boxSizing: 'border-box',
+  resize: 'none',
+  borderWidth: '0px',
+  color: 'inherit',
+  backgroundColor: 'inherit',
+  '&:focus-visible': {
+    outline: 'none',
+  },
 }));
 
 type Props = {
@@ -13,7 +20,24 @@ type Props = {
 };
 
 const OutputConsole: FC<Props> = ({ output }) => {
-  return <Frame>{output}</Frame>;
+  const outputRef = useRef<HTMLTextAreaElement | null>(null);
+  useEffect(() => {
+    if (outputRef?.current) {
+      outputRef.current.style.height = `${outputRef.current.scrollHeight}px`;
+      console.log(outputRef.current.style.height);
+    }
+  }, [output]);
+
+  if (!output) {
+    return null;
+  }
+  return (
+    <StyledTextArea
+      ref={outputRef}
+      readOnly
+      value={output.trim()}
+    ></StyledTextArea>
+  );
 };
 
 export default OutputConsole;

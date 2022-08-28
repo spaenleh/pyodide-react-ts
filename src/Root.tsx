@@ -44,7 +44,8 @@ export default function Root() {
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
         {/* Use CSSBaseline to reset the CSS and make sure everything is nice and elegant */}
-        <CssBaseline />
+        {/* Use enableColorScheme to enable dark or light element by default */}
+        <CssBaseline enableColorScheme />
         <Box
           sx={{
             alignItems: 'center',

@@ -7,8 +7,7 @@ import { PyWorker } from '@graasp/pyodide-worker';
 
 import { MAX_REPL_HEIGHT, ReplStatus } from '../constants/constants';
 import CodeEditor from './CodeEditor';
-import InputPrompt from './InputPrompt';
-import OutputConsole from './OutputConsole';
+import InputArea from './InputArea';
 import ReplToolbar from './ReplToolbar';
 import ShowFigures from './ShowFigures';
 
@@ -42,7 +41,7 @@ const Repl: FC = () => {
     };
 
     workerInstance.onError = (newError: any) => {
-      console.warn(newError);
+      console.error(newError);
       // setError(newError.data);
     };
 
@@ -71,6 +70,8 @@ const Repl: FC = () => {
         newStatus = ReplStatus.READY;
       } else if (['timeout'].includes(status)) {
         newStatus = ReplStatus.TIMEOUT;
+      } else if (status === 'input') {
+        newStatus = ReplStatus.WAIT_INPUT;
       } else {
         newStatus = ReplStatus.UNKNOWN_STATUS;
       }
@@ -92,6 +93,7 @@ const Repl: FC = () => {
     if (!isExecuting && worker && value) {
       setIsExecuting(true);
       // reset output
+      worker.clearOutput();
       setOutput('');
       worker.run(value);
     }
@@ -104,6 +106,11 @@ const Repl: FC = () => {
   };
 
   const onClickStopCode = () => {
+    if (isWaitingForInput && worker) {
+      worker.cancelInput();
+      worker.stop();
+      setIsWaitingForInput(false);
+    }
     if (isExecuting && worker) {
       worker.stop();
       setIsExecuting(false);
@@ -158,33 +165,26 @@ const Repl: FC = () => {
           <Grid
             xs
             display="flex"
-            // flexGrow={1}
-            overflow="hidden"
             sx={{
+              p: 1,
+              overflow: 'hidden',
               mb: 0.5,
               border: 1,
               borderRadius: 1,
               borderColor: 'info.main',
+              width: '100%',
             }}
           >
-            <Grid container direction="column" width="100%">
-              <Grid xs>
-                <OutputConsole output={output} />
-              </Grid>
-              <Grid justifySelf={'flex-end'}>
-                <InputPrompt
-                  prompt={prompt}
-                  onValidate={onClickValidateInput}
-                  onCancel={onClickCancel}
-                  isWaitingForInput={isWaitingForInput}
-                />
-              </Grid>
-            </Grid>
+            <InputArea
+              onValidate={onClickValidateInput}
+              onCancel={onClickCancel}
+              prompt={output + (isWaitingForInput ? prompt : '')}
+              readOnly={!isWaitingForInput}
+            />
           </Grid>
           <Grid
             xs
             display="flex"
-            // flexGrow={1}
             overflow="hidden"
             sx={{
               mt: 0.5,
