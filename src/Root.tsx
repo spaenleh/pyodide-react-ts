@@ -11,15 +11,16 @@ import {
 import { Box } from '@mui/material';
 
 import App from './App';
-import { ColorModeSwitcher } from './components/ColorModeSwitcher';
+import { ColorModeSwitcher } from './components/layout/ColorModeSwitcher';
 import ColorModeContext from './contexts/ColorModeContext';
 
 export default function Root() {
-  const userPreference = window.matchMedia(
+  // get user preference from browser
+  const userPrefersDarkMode = window.matchMedia(
     '(prefers-color-scheme: dark)',
   ).matches;
   const [mode, setMode] = useState<'light' | 'dark'>(
-    userPreference ? 'dark' : 'light',
+    userPrefersDarkMode ? 'dark' : 'light',
   );
   const colorMode = useMemo(
     () => ({
