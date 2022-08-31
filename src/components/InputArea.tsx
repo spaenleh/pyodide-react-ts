@@ -12,6 +12,7 @@ import { styled } from '@mui/material';
 import { DEFAULT_INPUT_VALUE } from '../constants/constants';
 
 const StyledTextArea = styled('textarea')(({ theme }) => ({
+  fontFamily: 'monospace',
   width: '100%',
   resize: 'none',
   height: 'auto',
