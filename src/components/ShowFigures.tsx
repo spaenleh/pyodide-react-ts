@@ -6,7 +6,9 @@ import { Stack, styled } from '@mui/material';
 import ImagePreview from './ImagePreview';
 
 const StyledContainer = styled(Stack)(({ theme }) => ({
-  padding: theme.spacing(1),
+  margin: theme.spacing(1),
+  marginBottom: '0px',
+  paddingBottom: theme.spacing(2),
   overflowX: 'scroll',
 }));
 

@@ -1,16 +1,8 @@
 import { FC, useState } from 'react';
 import React from 'react';
 
-import { Fullscreen } from '@mui/icons-material';
-import { Dialog, DialogContent, IconButton, Zoom, styled } from '@mui/material';
+import { Dialog, DialogContent, Zoom, styled } from '@mui/material';
 import { TransitionProps } from '@mui/material/transitions';
-
-const StyledContainer = styled('div')({
-  position: 'relative',
-  '&:hover button': {
-    display: 'flex',
-  },
-});
 
 const StyledImagePreview = styled('img')(({ theme }) => ({
   height: '100%',
@@ -24,13 +16,6 @@ const StyledImageFullView = styled('img')(({ theme }) => ({
   borderRadius: theme.spacing(1),
   objectFit: 'fill',
 }));
-
-const OpenFullScreenButton = styled(IconButton)({
-  display: 'none',
-  position: 'absolute',
-  right: '0px',
-  bottom: '0px',
-});
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -49,11 +34,12 @@ type Props = {
 const ImagePreview: FC<Props> = ({ imageSrc, alt }) => {
   const [isOpen, setIsOpen] = useState(false);
   return (
-    <StyledContainer>
-      <StyledImagePreview src={imageSrc} alt={alt}></StyledImagePreview>
-      <OpenFullScreenButton color="primary" onClick={() => setIsOpen(true)}>
-        <Fullscreen />
-      </OpenFullScreenButton>
+    <>
+      <StyledImagePreview
+        onClick={() => setIsOpen(true)}
+        src={imageSrc}
+        alt={alt}
+      ></StyledImagePreview>
       <Dialog
         TransitionComponent={Transition}
         maxWidth="xl"
@@ -65,7 +51,7 @@ const ImagePreview: FC<Props> = ({ imageSrc, alt }) => {
           <StyledImageFullView src={imageSrc} alt={alt}></StyledImageFullView>
         </DialogContent>
       </Dialog>
-    </StyledContainer>
+    </>
   );
 };
 
