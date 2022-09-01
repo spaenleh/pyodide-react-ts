@@ -8,13 +8,14 @@ const StyledImagePreview = styled('img')(({ theme }) => ({
   height: '100%',
   borderRadius: theme.spacing(1),
   objectFit: 'cover',
+  cursor: 'pointer',
 }));
 
 const StyledImageFullView = styled('img')(({ theme }) => ({
-  height: '100%',
-  width: '100%',
+  maxHeight: 'calc(100vh - 128px)',
+  maxWidth: 'calc(100vw - 128px)',
   borderRadius: theme.spacing(1),
-  objectFit: 'fill',
+  objectFit: 'scale-down',
 }));
 
 const Transition = React.forwardRef(function Transition(
@@ -42,8 +43,7 @@ const ImagePreview: FC<Props> = ({ imageSrc, alt }) => {
       ></StyledImagePreview>
       <Dialog
         TransitionComponent={Transition}
-        maxWidth="xl"
-        sx={{ overflow: 'hidden' }}
+        maxWidth={false}
         open={isOpen}
         onClose={() => setIsOpen(false)}
       >
