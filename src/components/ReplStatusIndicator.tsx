@@ -2,38 +2,38 @@ import { FC } from 'react';
 
 import { Paper } from '@mui/material';
 
-import { ReplStatus } from '../constants/constants';
+import { PyodideStatus } from '@graasp/pyodide-worker';
 
 type Props = {
-  status: ReplStatus;
+  status: PyodideStatus;
 };
 
 const ReplStatusIndicator: FC<Props> = ({ status }) => {
   let style;
   switch (status) {
-    case ReplStatus.READY:
+    case PyodideStatus.READY:
       style = {
         borderColor: 'success.main',
         color: 'success.main',
       };
       break;
-    case ReplStatus.LOADING_PYODIDE:
-    case ReplStatus.LOADING_MODULE:
-    case ReplStatus.INSTALLING:
-    case ReplStatus.RUNNING:
+    case PyodideStatus.LOADING_PYODIDE:
+    case PyodideStatus.LOADING_MODULE:
+    case PyodideStatus.INSTALLING:
+    case PyodideStatus.RUNNING:
       style = {
         borderColor: 'warning.main',
         color: 'warning.main',
       };
       break;
-    case ReplStatus.ERROR:
-    case ReplStatus.TIMEOUT:
+    case PyodideStatus.ERROR:
+    case PyodideStatus.TIMEOUT:
       style = {
         borderColor: 'error.main',
         color: 'error.main',
       };
       break;
-    case ReplStatus.WAIT_INPUT:
+    case PyodideStatus.WAIT_INPUT:
       style = {
         borderColor: 'info.main',
         color: 'info.main',

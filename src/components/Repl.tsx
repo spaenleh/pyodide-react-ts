@@ -3,9 +3,9 @@ import { FC, useEffect, useState } from 'react';
 import { Alert, Stack } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 
-import { PyWorker } from '@graasp/pyodide-worker';
+import { PyWorker, PyodideStatus } from '@graasp/pyodide-worker';
 
-import { MAX_REPL_HEIGHT, ReplStatus } from '../constants/constants';
+import { MAX_REPL_HEIGHT } from '../constants/constants';
 import CodeEditor from './CodeEditor';
 import InputArea from './InputArea';
 import ReplToolbar from './ReplToolbar';
@@ -21,13 +21,16 @@ const Repl: FC = () => {
   const [value, setValue] = useState('');
   const [isExecuting, setIsExecuting] = useState(false);
   const [isWaitingForInput, setIsWaitingForInput] = useState(false);
-  const [replStatus, setReplStatus] = useState<ReplStatus>(
-    ReplStatus.LOADING_PYODIDE,
+  const [replStatus, setReplStatus] = useState<PyodideStatus>(
+    PyodideStatus.LOADING_PYODIDE,
   );
+
   // register worker on mount
   useEffect(() => {
     // todo: reconciliate the concat output option
-    const workerInstance = new PyWorker();
+    const workerInstance = new PyWorker(
+      'https://spaenleh.github.io/graasp-pyodide/fullWorker.min.js',
+    );
 
     workerInstance.onOutput = (newOutput, append = false) => {
       setOutput((prevOutput) =>
@@ -47,36 +50,15 @@ const Repl: FC = () => {
 
     workerInstance.onTerminated = () => {
       setIsExecuting(false);
-      setReplStatus(ReplStatus.READY);
+      setReplStatus(PyodideStatus.READY);
     };
 
     workerInstance.onFigure = (figureData) => {
       setFigures((prevFigures) => [...prevFigures, figureData]);
     };
 
-    workerInstance.onStatusChanged = (status: string) => {
-      console.log('Status Update:', status);
-      let newStatus;
-      // loading Pyodide || loading module
-      if (status.startsWith('loading Pyodide')) {
-        newStatus = ReplStatus.LOADING_PYODIDE;
-      } else if (status.startsWith('loading module')) {
-        newStatus = ReplStatus.LOADING_MODULE;
-      } else if (['startup', 'setup'].includes(status)) {
-        newStatus = ReplStatus.INSTALLING;
-      } else if (status === 'running') {
-        newStatus = ReplStatus.RUNNING;
-      } else if (['done', ''].includes(status)) {
-        newStatus = ReplStatus.READY;
-      } else if (['timeout'].includes(status)) {
-        newStatus = ReplStatus.TIMEOUT;
-      } else if (status === 'input') {
-        newStatus = ReplStatus.WAIT_INPUT;
-      } else {
-        newStatus = ReplStatus.UNKNOWN_STATUS;
-      }
-
-      setReplStatus(newStatus || ReplStatus.UNKNOWN_STATUS);
+    workerInstance.onStatusUpdate = (status: PyodideStatus) => {
+      setReplStatus(status);
     };
 
     // preload worker instance

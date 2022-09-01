@@ -14,7 +14,8 @@ import { LoadingButton } from '@mui/lab';
 import { Button, Stack } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 
-import { ReplStatus } from '../constants/constants';
+import { PyodideStatus } from '@graasp/pyodide-worker';
+
 import ReplStatusIndicator from './ReplStatusIndicator';
 
 library.add(fas);
@@ -25,7 +26,7 @@ type Props = {
   onRunCode: () => void;
   onStopCode: () => void;
   onClearOutput: () => void;
-  status: ReplStatus;
+  status: PyodideStatus;
 };
 
 const ReplToolbar: FC<Props> = ({
@@ -35,12 +36,12 @@ const ReplToolbar: FC<Props> = ({
   status,
 }) => {
   const isLoading = [
-    ReplStatus.LOADING_MODULE,
-    ReplStatus.LOADING_PYODIDE,
-    ReplStatus.INSTALLING,
-    ReplStatus.ERROR,
+    PyodideStatus.LOADING_MODULE,
+    PyodideStatus.LOADING_PYODIDE,
+    PyodideStatus.INSTALLING,
+    PyodideStatus.ERROR,
   ].includes(status);
-  const isRunning = [ReplStatus.RUNNING, ReplStatus.WAIT_INPUT].includes(
+  const isRunning = [PyodideStatus.RUNNING, PyodideStatus.WAIT_INPUT].includes(
     status,
   );
 
