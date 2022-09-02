@@ -7,6 +7,7 @@ import { TransitionProps } from '@mui/material/transitions';
 const StyledImagePreview = styled('img')(({ theme }) => ({
   height: '100%',
   borderRadius: theme.spacing(1),
+  border: '1px solid lightgray',
   objectFit: 'cover',
   cursor: 'pointer',
 }));
@@ -15,6 +16,7 @@ const StyledImageFullView = styled('img')(({ theme }) => ({
   maxHeight: 'calc(100vh - 128px)',
   maxWidth: 'calc(100vw - 128px)',
   borderRadius: theme.spacing(1),
+  border: '1px solid lightgray',
   objectFit: 'scale-down',
 }));
 

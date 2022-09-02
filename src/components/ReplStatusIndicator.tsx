@@ -1,6 +1,7 @@
 import { FC } from 'react';
 
-import { Paper } from '@mui/material';
+import { Check, Edit, ErrorOutline, HourglassEmpty } from '@mui/icons-material';
+import { Paper, Typography } from '@mui/material';
 
 import { PyodideStatus } from '@graasp/pyodide-worker';
 
@@ -10,12 +11,14 @@ type Props = {
 
 const ReplStatusIndicator: FC<Props> = ({ status }) => {
   let style;
+  let icon;
   switch (status) {
     case PyodideStatus.READY:
       style = {
         borderColor: 'success.main',
         color: 'success.main',
       };
+      icon = <Check />;
       break;
     case PyodideStatus.LOADING_PYODIDE:
     case PyodideStatus.LOADING_MODULE:
@@ -25,6 +28,7 @@ const ReplStatusIndicator: FC<Props> = ({ status }) => {
         borderColor: 'warning.main',
         color: 'warning.main',
       };
+      icon = <HourglassEmpty />;
       break;
     case PyodideStatus.ERROR:
     case PyodideStatus.TIMEOUT:
@@ -32,12 +36,14 @@ const ReplStatusIndicator: FC<Props> = ({ status }) => {
         borderColor: 'error.main',
         color: 'error.main',
       };
+      icon = <ErrorOutline />;
       break;
     case PyodideStatus.WAIT_INPUT:
       style = {
         borderColor: 'info.main',
         color: 'info.main',
       };
+      icon = <Edit />;
   }
 
   return (
@@ -52,7 +58,8 @@ const ReplStatusIndicator: FC<Props> = ({ status }) => {
       }}
       variant="outlined"
     >
-      {status}
+      {icon}
+      <Typography variant="button">{status}</Typography>
     </Paper>
   );
 };

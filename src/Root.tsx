@@ -12,6 +12,7 @@ import { Box } from '@mui/material';
 
 import App from './App';
 import { ColorModeSwitcher } from './components/layout/ColorModeSwitcher';
+import Footer from './components/layout/Footer';
 import ColorModeContext from './contexts/ColorModeContext';
 
 export default function Root() {
@@ -69,6 +70,7 @@ export default function Root() {
             <App />
           </Stack>
         </Box>
+        <Footer />
       </ThemeProvider>
     </ColorModeContext.Provider>
   );
